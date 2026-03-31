@@ -16,9 +16,12 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Serve static frontend in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '..', 'dist')));
+// Serve static frontend — always serve if dist folder exists
+const distPath = path.join(__dirname, '..', 'dist');
+import fs from 'fs';
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  console.log(`[STATIC] Serving frontend from ${distPath}`);
 }
 
 // ============================================
@@ -426,10 +429,13 @@ app.get('/api/export/addresses', async (req, res) => {
   }
 });
 
-// Catch-all for SPA in production
-if (process.env.NODE_ENV === 'production') {
+// Catch-all for SPA — serve index.html for any non-API route
+if (fs.existsSync(distPath)) {
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ error: 'API route not found' });
+    }
+    res.sendFile(path.join(distPath, 'index.html'));
   });
 }
 

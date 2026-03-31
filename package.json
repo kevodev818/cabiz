@@ -4,15 +4,20 @@
   "description": "California New Business Lead Engine — Monitor SOS filings & automate outreach",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:client": "vite",
     "dev:server": "node --watch server/index.js",
     "build": "vite build",
-    "start": "NODE_ENV=production node server/index.js",
+    "start": "node server/index.js",
+    "postinstall": "echo 'Install complete'",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@azure/msal-node": "^2.9.2",
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "axios": "^1.7.2",
     "cheerio": "^1.0.0-rc.12",
@@ -22,8 +27,6 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "isomorphic-fetch": "^3.0.0",
-    "msal-node": "^0.0.1",
-    "@azure/msal-node": "^2.9.2",
     "nedb-promises": "^6.2.3",
     "nodemailer": "^6.9.14",
     "react": "^18.3.1",
