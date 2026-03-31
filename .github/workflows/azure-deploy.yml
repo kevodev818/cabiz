@@ -10,7 +10,7 @@ on:
   workflow_dispatch:  # Allows manual trigger from GitHub UI
 
 env:
-  AZURE_WEBAPP_NAME: cabiz    # ← CHANGE THIS to your Azure Web App name
+  AZURE_WEBAPP_NAME: cabiz   # ← CHANGE THIS to your Azure Web App name
   NODE_VERSION: '20.x'
 
 jobs:
@@ -26,38 +26,39 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build frontend (Vite)
         run: npm run build
 
       - name: Create deployment package
         run: |
-          # Remove dev-only files from the deploy package
           mkdir -p deploy
-          
+
           # Copy built frontend
           cp -r dist deploy/dist
-          
+
           # Copy server files
           cp -r server deploy/server
-          
+
           # Copy package files
           cp package.json deploy/
-          cp package-lock.json deploy/
-          
+          cp package-lock.json deploy/ 2>/dev/null || true
+
           # Copy env example (actual .env is set via Azure App Settings)
           cp .env.example deploy/.env.example
-          
+
+          # Copy web.config for Azure IIS
+          cp web.config deploy/ 2>/dev/null || true
+
           # Create data directory
           mkdir -p deploy/data
 
       - name: Install production dependencies in deploy folder
         working-directory: deploy
-        run: npm ci --omit=dev
+        run: npm install --omit=dev
 
       - name: Zip deployment package
         run: |
