@@ -84,7 +84,7 @@
   }
 
   .stat-card {
-    @apply glass-card p-5 group hover:shadow-md transition-all duration-300;
+    @apply glass-card p-5 hover:shadow-md transition-all duration-300;
   }
 
   .table-row {
